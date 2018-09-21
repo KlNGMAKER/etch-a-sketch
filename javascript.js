@@ -24,8 +24,10 @@ function generateBoard() {
 
 function generateRows() {
     var container = document.querySelector('.container');
+    
     for (i = 0; i < gridSize; i++) {
         var row = document.createElement('div');
+        
         row.className = 'row';
         row.style.height = length + 'px';
         row.style.width = (length * gridSize) + 'px';
@@ -35,9 +37,11 @@ function generateRows() {
 
 function generateCells() {
     var rows = document.querySelectorAll('.row');
+    
     rows.forEach((row) => { 
         for (i = 0; i < gridSize; i++) {
             var cell = document.createElement('div');
+            
             cell.className = 'cell';
             cell.style.height = length + 'px';
             cell.style.width = length + 'px';
@@ -51,6 +55,7 @@ function resetBoard() {
     cells = document.querySelectorAll('.cell');
     cells.forEach((cell) => {
         cell.style.backgroundColor = 'white';
+        cell.className = 'cell';
     });
 }
 
@@ -60,16 +65,35 @@ function calculateSize() {
 
 function sketch(mouse) {
     var cell = mouse.target;
+    
+    if (cell.classList.contains('sketched')) {
+        darkenRgb(cell);
+    } else {
+        cell.style.backgroundColor = getRandomRgb();
+        cell.classList.add('sketched');
+    }
 
-    cell.style.backgroundColor = getRandomColor();
+    function getRandomRgb() {
+        var rgbArr = []
 
-    function getRandomColor() {
-        var digits = '0123456789ABCDEF';
-        var hash = '#';
-        for (i = 0; i < 6; i++) {
-            hash += digits[Math.floor(Math.random() * 16)];
+        for (i = 0; i < 3; i++) {
+            rgbArr.push(Math.floor(Math.random() * 255));
         }
-        return hash;
+        return rgbArrToStr(rgbArr);
+    }
+
+    function darkenRgb(cell) {
+        var rgbText = cell.style.backgroundColor;
+        var rgbArr = rgbText.substring(4, rgbText.length - 1).replace(/ /g, '').split(',');
+        
+        rgbArr.forEach((value, index) => {
+            rgbArr[index] = value * 0.9;
+        });
+        cell.style.backgroundColor = rgbArrToStr(rgbArr);
+    }
+
+    function rgbArrToStr(rgb) {
+        return `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
     }
 }
 
